@@ -25,8 +25,6 @@ class Payment extends Model
     protected $guarded = ['id'];
 
     protected $casts = [
-        'created_at' => Carbon::class,
-        'updated_at' => Carbon::class,
         'amount' => MoneyCast::class,
     ];
 

@@ -19,11 +19,6 @@ class CartItem extends Model
 
     protected $guarded = ['id'];
 
-    protected $casts = [
-        'created_at' => Carbon::class,
-        'updated_at' => Carbon::class,
-    ];
-
     public function product(): BelongsTo
     {
         return $this->belongsTo(Product::class);

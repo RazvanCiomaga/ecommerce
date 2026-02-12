@@ -36,14 +36,12 @@ class Product extends Model
 
     protected $casts = [
         'price' => MoneyCast::class,
-        'created_at' => Carbon::class,
-        'updated_at' => Carbon::class,
     ];
 
     public function getSlugOptions(): SlugOptions
     {
         return SlugOptions::create()
-            ->generateSlugsFrom('title')
+            ->generateSlugsFrom('name')
             ->saveSlugsTo('slug');
     }
 

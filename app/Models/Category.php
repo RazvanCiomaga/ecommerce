@@ -18,11 +18,6 @@ class Category extends Model
 
     protected $guarded = ['id'];
 
-    protected $casts = [
-        'created_at' => Carbon::class,
-        'updated_at' => Carbon::class,
-    ];
-
     public function products(): HasMany
     {
         return $this->hasMany(Product::class);
