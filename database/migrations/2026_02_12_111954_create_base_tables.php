@@ -27,13 +27,13 @@ return new class extends Migration
             $table->id();
             $table->string('name')->index()->nullable();
             $table->string('slug')->index()->nullable();
-            $table->text('description')->index()->nullable();
+            $table->longText('description')->nullable();
             $table->integer('price')->index()->nullable();
             $table->integer('quantity')->nullable()->index()->nullable();
             $table->boolean('in_stock')->default(true)->index()->nullable();
-            $table->foreignId('brand_id')->nullable()->constrained('brands')->onDelete('set null');
-            $table->foreignId('category_id')->nullable()->constrained('categories')->onDelete('set null');
-            $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('set null');
+            $table->foreignId('brand_id')->constrained('brands')->onDelete('cascade');
+            $table->foreignId('category_id')->constrained('categories')->onDelete('cascade');
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->timestamps();
         });
 
@@ -66,13 +66,13 @@ return new class extends Migration
 
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained('users')->onDelete('set null');
-            $table->foreignId('address_id')->constrained('user_addresses')->onDelete('set null');
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('address_id')->constrained('user_addresses')->onDelete('cascade');
             $table->string('status')->index()->nullable();
             $table->integer('total_price')->default(0)->index()->nullable();
             $table->string('session_id')->nullable()->index()->nullable();
-            $table->foreignId('created_by')->nullable()->constrained('users')->onDelete('set null');
-            $table->foreignId('updated_by')->nullable()->constrained('users')->onDelete('set null');
+            $table->foreignId('created_by')->constrained('users')->onDelete('cascade');
+            $table->foreignId('updated_by')->constrained('users')->onDelete('cascade');
             $table->timestamps();
         });
 
@@ -91,8 +91,8 @@ return new class extends Migration
             $table->integer('amount')->default(0)->index();
             $table->string('status')->index();
             $table->string('type')->index();
-            $table->foreignId('created_by')->nullable()->constrained('users')->onDelete('set null');
-            $table->foreignId('updated_by')->nullable()->constrained('users')->onDelete('set null');
+            $table->foreignId('created_by')->constrained('users')->onDelete('cascade');
+            $table->foreignId('updated_by')->constrained('users')->onDelete('cascade');
             $table->timestamps();
         });
     }
