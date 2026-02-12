@@ -3,10 +3,13 @@
 namespace App\Models;
 
 use App\Casts\MoneyCast;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Carbon;
+use Spatie\Sluggable\HasSlug;
+use Spatie\Sluggable\SlugOptions;
 
 /**
  * @property int $id
@@ -24,6 +27,9 @@ use Illuminate\Support\Carbon;
  */
 class Product extends Model
 {
+    use HasSlug;
+    use HasFactory;
+
     protected $table = 'products';
 
     protected $guarded = ['id'];
@@ -33,6 +39,13 @@ class Product extends Model
         'created_at' => Carbon::class,
         'updated_at' => Carbon::class,
     ];
+
+    public function getSlugOptions(): SlugOptions
+    {
+        return SlugOptions::create()
+            ->generateSlugsFrom('title')
+            ->saveSlugsTo('slug');
+    }
 
     public function brand(): BelongsTo
     {
