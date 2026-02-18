@@ -5,13 +5,14 @@ import ProductList from "@/Pages/Admin/Product/ProductList.vue";
 defineProps({
     products: Object,
     categories: Array,
-    brands: Array
+    brands: Array,
+    filters: Object
 })
 </script>
 
 <template>
     <AdminLayout>
-        <ProductList :products="products" :categories="categories" :brands="brands" />
+        <ProductList :products="products" :categories="categories" :brands="brands" :filters="filters" />
     </AdminLayout>
 </template>
 
