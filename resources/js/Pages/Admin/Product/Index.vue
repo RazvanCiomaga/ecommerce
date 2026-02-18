@@ -3,13 +3,15 @@ import AdminLayout from "@/Pages/Admin/Components/AdminLayout.vue";
 import ProductList from "@/Pages/Admin/Product/ProductList.vue";
 
 defineProps({
-    products: Object
+    products: Object,
+    categories: Array,
+    brands: Array
 })
 </script>
 
 <template>
     <AdminLayout>
-        <ProductList :products="products" />
+        <ProductList :products="products" :categories="categories" :brands="brands" />
     </AdminLayout>
 </template>
 

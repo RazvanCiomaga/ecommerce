@@ -1,10 +1,22 @@
 <script setup>
-import { usePage } from "@inertiajs/vue3";
+import { usePage, useForm, router } from "@inertiajs/vue3";
+import { ref } from "vue";
 import Table from "@/Pages/Admin/Components/Table.vue";
+import ProductModal from "@/Pages/Admin/Components/ProductModal.vue";
+import Modal from "@/Components/Modal.vue";
+import SecondaryButton from "@/Components/SecondaryButton.vue";
+import DangerButton from "@/Components/DangerButton.vue";
 
-defineProps({
-    products: Object
+const props = defineProps({
+    products: Object,
+    categories: Array,
+    brands: Array
 });
+
+const isProductModalOpen = ref(false);
+const isDeleteModalOpen = ref(false);
+const editingProduct = ref(null);
+const productToDelete = ref(null);
 
 const columns = [
     { key: 'name', label: 'Product name' },
@@ -15,6 +27,36 @@ const columns = [
     { key: 'in_stock', label: 'Stock' },
     { key: 'price', label: 'Price' }
 ];
+
+const openAddProductModal = () => {
+    editingProduct.value = null;
+    isProductModalOpen.value = true;
+}
+
+const openEditProductModal = (product) => {
+    editingProduct.value = product;
+    isProductModalOpen.value = true;
+}
+
+const openDeleteModal = (product) => {
+    productToDelete.value = product;
+    isDeleteModalOpen.value = true;
+}
+
+const closeModal = () => {
+    isProductModalOpen.value = false;
+    isDeleteModalOpen.value = false;
+    productToDelete.value = null;
+    editingProduct.value = null;
+}
+
+const deleteProduct = () => {
+    if (productToDelete.value) {
+        router.delete(route('admin.products.destroy', productToDelete.value.id), {
+            onSuccess: () => closeModal()
+        });
+    }
+}
 </script>
 
 <template>
@@ -36,7 +78,7 @@ const columns = [
                         </form>
                     </div>
                     <div class="w-full md:w-auto flex flex-col md:flex-row space-y-2 md:space-y-0 items-stretch md:items-center justify-end md:space-x-3 flex-shrink-0">
-                        <button type="button" class="flex items-center justify-center text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
+                        <button @click="openAddProductModal" type="button" class="flex items-center justify-center text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
                             <svg class="h-3.5 w-3.5 mr-2" fill="currentColor" viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                                 <path clip-rule="evenodd" fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" />
                             </svg>
@@ -122,16 +164,35 @@ const columns = [
                                     <a href="#" class="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Show</a>
                                 </li>
                                 <li>
-                                    <a href="#" class="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Edit</a>
+                                    <button @click="openEditProductModal(item)" class="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Edit</button>
                                 </li>
                             </ul>
                             <div class="py-1">
-                                <a href="#" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Delete</a>
+                                <button @click="openDeleteModal(item)" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Delete</button>
                             </div>
                         </div>
                     </template>
                 </Table>
             </div>
+            <ProductModal 
+                :show="isProductModalOpen" 
+                :product="editingProduct" 
+                :categories="categories" 
+                :brands="brands" 
+                @close="closeModal" 
+            />
+            
+            <Modal :show="isDeleteModalOpen" @close="closeModal">
+                <div class="p-6">
+                    <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">
+                        Are you sure you want to delete this record?
+                    </h2>
+                    <div class="mt-6 flex justify-end">
+                        <SecondaryButton @click="closeModal"> Cancel </SecondaryButton>
+                        <DangerButton class="ml-3" @click="deleteProduct"> Delete </DangerButton>
+                    </div>
+                </div>
+            </Modal>
         </div>
     </section>
 </template>
