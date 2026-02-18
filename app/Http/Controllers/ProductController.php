@@ -14,7 +14,15 @@ class ProductController extends Controller
     public function index()
     {
         /** @var Collection<Product> $products */
-        $products = Product::query()->with(['category', 'brand'])->paginate(10);
+        $products = Product::query()
+            ->with(['category', 'brand'])
+            ->when(request('brands'), function ($query, $brands) {
+                $query->whereIn('brand_id', $brands);
+            })
+            ->when(request('categories'), function ($query, $categories) {
+                $query->whereIn('category_id', $categories);
+            })
+            ->paginate(10);
 
         /** @var Collection<Category> $categories */
         $categories = Category::all();
@@ -25,7 +33,8 @@ class ProductController extends Controller
         return Inertia::render('Admin/Product/Index', [
             'products' => $products,
             'categories' => $categories,
-            'brands' => $brands
+            'brands' => $brands,
+            'filters' => request()->only(['brands', 'categories'])
         ]);
     }
 
