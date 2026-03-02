@@ -28,7 +28,6 @@ use Spatie\Sluggable\SlugOptions;
 class Product extends Model
 {
     use HasSlug;
-    use HasFactory;
 
     protected $table = 'products';
 

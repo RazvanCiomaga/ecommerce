@@ -7,6 +7,7 @@ use App\Models\Category;
 use App\Models\Product;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Inertia\Inertia;
 
 class ProductController extends Controller
@@ -44,28 +45,18 @@ class ProductController extends Controller
 
     public function store(Request $request)
     {
-        $product = Product::create($request->validate([
-            'name' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'price' => 'required|numeric|min:0',
-            'quantity' => 'required|integer|min:0',
-            'category_id' => 'required|exists:categories,id',
-            'brand_id' => 'required|exists:brands,id',
-        ]) + ['user_id' => $request->user()->id]);
+        $product = Product::create($this->validateProduct($request) + ['user_id' => $request->user()->id]);
+
+        $this->uploadImages($request, $product);
 
         return redirect()->route('admin.products.index')->with('success', 'Product created successfully.');
     }
 
     public function update(Request $request, Product $product)
     {
-        $product->update($request->validate([
-            'name' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'price' => 'required|numeric|min:0',
-            'quantity' => 'required|integer|min:0',
-            'category_id' => 'required|exists:categories,id',
-            'brand_id' => 'required|exists:brands,id',
-        ]));
+        $product->update($this->validateProduct($request));
+
+        $this->uploadImages($request, $product);
 
         return redirect()->route('admin.products.index')->with('success', 'Product updated successfully.');
     }
@@ -75,5 +66,31 @@ class ProductController extends Controller
         $product->delete();
 
         return redirect()->route('admin.products.index')->with('success', 'Product deleted successfully.');
+    }
+
+    private function validateProduct(Request $request)
+    {
+        return $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'price' => 'required|numeric|min:0',
+            'quantity' => 'required|integer|min:0',
+            'category_id' => 'required|exists:categories,id',
+            'brand_id' => 'required|exists:brands,id',
+        ]);
+    }
+
+    private function uploadImages(Request $request, Product $product)
+    {
+        if ($request->hasFile('product_images')) {
+            foreach ($request->file('product_images') as $image) {
+                $fileName = time() . '-' . Str::random(10) . '.' . $image->getClientOriginalExtension();
+                $image->move(public_path('product_images'), $fileName);
+
+                $product->images()->create([
+                    'image' => 'product_images/' . $fileName,
+                ]);
+            }
+        }
     }
 }
