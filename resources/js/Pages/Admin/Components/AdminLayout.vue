@@ -3,6 +3,7 @@
     import Navbar from '@/Pages/Admin/Components/Navbar.vue'
     import { onMounted } from 'vue'
     import { initFlowbite } from 'flowbite'
+    import Toast from "@/Pages/Admin/Components/Toast.vue";
 
     // initialize components based on data attribute selectors
     onMounted(() => {
@@ -17,6 +18,8 @@
         <main class="p-4 md:ml-64 h-auto pt-20">
             <slot />
         </main>
+
+        <Toast />
     </div>
 </template>
 
