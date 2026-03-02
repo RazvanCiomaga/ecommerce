@@ -23,7 +23,7 @@ const productToDelete = ref(null);
 
 const selectedBrands = ref(props.filters?.brands || []);
 const selectedCategories = ref(props.filters?.categories || []);
-const search = ref(props.filters?.categories || '');
+const search = ref(props.filters?.search || '');
 
 const categoryOptions = computed(() => {
     return props.categories.map(category => ({
