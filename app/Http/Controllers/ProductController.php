@@ -5,8 +5,10 @@ namespace App\Http\Controllers;
 use App\Models\Brand;
 use App\Models\Category;
 use App\Models\Product;
+use App\Models\ProductImage;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
 
@@ -16,7 +18,7 @@ class ProductController extends Controller
     {
         /** @var Collection<Product> $products */
         $products = Product::query()
-            ->with(['category', 'brand'])
+            ->with(['category', 'brand', 'images'])
             ->when(request('brands'), function ($query, $brands) {
                 $query->whereIn('brand_id', $brands);
             })
@@ -91,5 +93,18 @@ class ProductController extends Controller
                 ]);
             }
         }
+    }
+
+    public function destroyImage(ProductImage $image)
+    {
+        $path = str_replace('storage/', '', $image->image);
+
+        if (Storage::disk('public')->exists($path)) {
+            Storage::disk('public')->delete($path);
+        }
+
+        $image->delete();
+
+        return back()->with('success', 'Image deleted successfully');
     }
 }

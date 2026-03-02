@@ -43,5 +43,6 @@ Route::middleware(['admin', 'auth'])->prefix('admin')->group(function () {
     Route::post('/products/create', [ProductController::class, 'store'])->name('admin.products.store');
     Route::put('/products/{product}', [ProductController::class, 'update'])->name('admin.products.update');
     Route::delete('/products/{product}', [ProductController::class, 'destroy'])->name('admin.products.destroy');
+    Route::delete('/admin/product-images/{image}', [ProductController::class, 'destroyImage'])->name('admin.product_images.destroy');
 });
 require __DIR__ . '/auth.php';
