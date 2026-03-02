@@ -7,6 +7,7 @@ import Modal from "@/Components/Modal.vue";
 import SecondaryButton from "@/Components/SecondaryButton.vue";
 import DangerButton from "@/Components/DangerButton.vue";
 import FilterDropdown from "@/Pages/Admin/Components/FilterDropdown.vue";
+import { debounce } from "lodash-es";
 
 const props = defineProps({
     products: Object,
@@ -22,6 +23,7 @@ const productToDelete = ref(null);
 
 const selectedBrands = ref(props.filters?.brands || []);
 const selectedCategories = ref(props.filters?.categories || []);
+const search = ref(props.filters?.categories || '');
 
 const categoryOptions = computed(() => {
     return props.categories.map(category => ({
@@ -37,14 +39,26 @@ const brandOptions = computed(() => {
     }));
 });
 
-watch([selectedBrands, selectedCategories], () => {
+const filterProducts = () => {
     router.get(route('admin.products.index'), {
         brands: selectedBrands.value,
-        categories: selectedCategories.value
+        categories: selectedCategories.value,
+        search: search.value
     }, {
         preserveState: true,
-        replace: true
+        replace: true,
+        preserveScroll: true
     });
+};
+
+const debouncedSearch = debounce(filterProducts, 500); // use debounce only when user search
+
+watch([selectedBrands, selectedCategories], () => {
+    filterProducts();
+});
+
+watch(search, () => {
+    debouncedSearch();
 });
 
 const columns = [
@@ -102,7 +116,7 @@ const deleteProduct = () => {
                                         <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
                                     </svg>
                                 </div>
-                                <input type="text" id="simple-search" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full pl-10 p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Search" required="">
+                                <input type="text" id="simple-search" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full pl-10 p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" placeholder="Search" required="" v-model="search">
                             </div>
                         </form>
                     </div>
@@ -130,17 +144,17 @@ const deleteProduct = () => {
                                     <a href="#" class="block py-2 px-4 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Delete all</a>
                                 </div>
                             </div>
-                            
-                            <FilterDropdown 
-                                :items="brandOptions" 
-                                v-model="selectedBrands" 
-                                label="Brand" 
+
+                            <FilterDropdown
+                                :items="brandOptions"
+                                v-model="selectedBrands"
+                                label="Brand"
                             />
-                            
-                            <FilterDropdown 
-                                :items="categoryOptions" 
-                                v-model="selectedCategories" 
-                                label="Category" 
+
+                            <FilterDropdown
+                                :items="categoryOptions"
+                                v-model="selectedCategories"
+                                label="Category"
                             />
                         </div>
                     </div>
@@ -181,14 +195,14 @@ const deleteProduct = () => {
                     </template>
                 </Table>
             </div>
-            <ProductModal 
-                :show="isProductModalOpen" 
-                :product="editingProduct" 
-                :categories="categories" 
-                :brands="brands" 
-                @close="closeModal" 
+            <ProductModal
+                :show="isProductModalOpen"
+                :product="editingProduct"
+                :categories="categories"
+                :brands="brands"
+                @close="closeModal"
             />
-            
+
             <Modal :show="isDeleteModalOpen" @close="closeModal">
                 <div class="p-6">
                     <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">

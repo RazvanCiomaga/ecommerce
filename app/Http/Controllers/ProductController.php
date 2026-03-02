@@ -22,6 +22,10 @@ class ProductController extends Controller
             ->when(request('categories'), function ($query, $categories) {
                 $query->whereIn('category_id', $categories);
             })
+            ->when(request('search'), function ($query, $search) {
+                $query->where('name', 'like', "%{$search}%")
+                    ->orWhere('description', 'like', "%{$search}%");
+            })
             ->paginate(10);
 
         /** @var Collection<Category> $categories */
@@ -34,7 +38,7 @@ class ProductController extends Controller
             'products' => $products,
             'categories' => $categories,
             'brands' => $brands,
-            'filters' => request()->only(['brands', 'categories'])
+            'filters' => request()->only(['brands', 'categories', 'search'])
         ]);
     }
 
