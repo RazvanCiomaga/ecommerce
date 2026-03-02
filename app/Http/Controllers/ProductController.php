@@ -84,11 +84,10 @@ class ProductController extends Controller
     {
         if ($request->hasFile('productImages')) {
             foreach ($request->file('productImages') as $image) {
-                $fileName = time() . '-' . Str::random(10) . '.' . $image->getClientOriginalExtension();
-                $image->move(public_path('product_images'), $fileName);
+                $path = $image->store('product_images', 'public');
 
                 $product->images()->create([
-                    'image' => 'product_images/' . $fileName,
+                    'image' => 'storage/' . $path,
                 ]);
             }
         }
