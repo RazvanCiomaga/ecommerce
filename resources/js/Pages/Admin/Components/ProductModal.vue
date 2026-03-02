@@ -1,10 +1,11 @@
 <script setup>
 import { computed, watch } from 'vue';
-import { useForm } from '@inertiajs/vue3';
+import {router, useForm} from '@inertiajs/vue3';
 import Modal from '@/Components/Modal.vue';
 import InputGroup from '@/Pages/Admin/Components/Form/Input.vue';
 import SelectGroup from '@/Pages/Admin/Components/Form/Select.vue';
 import TextareaGroup from '@/Pages/Admin/Components/Form/Textarea.vue';
+import FileUpload from "@/Pages/Admin/Components/Form/FileUpload.vue";
 
 const props = defineProps({
     show: Boolean,
@@ -51,7 +52,8 @@ const form = useForm({
     price: '',
     category_id: '',
     quantity: '',
-    description: ''
+    description: '',
+    productImages: []
 });
 
 watch(() => props.product, (newProduct) => {
@@ -62,6 +64,7 @@ watch(() => props.product, (newProduct) => {
         form.category_id = newProduct.category_id;
         form.quantity = newProduct.quantity;
         form.description = newProduct.description;
+        form.productImages = newProduct.productImages;
     } else {
         form.reset();
     }
@@ -69,10 +72,18 @@ watch(() => props.product, (newProduct) => {
 
 const submit = () => {
     if (props.product) {
-        form.put(route('admin.products.update', props.product.id), {
-            onSuccess: () => {
-                close();
-            }
+        router.post(route('admin.products.update', props.product.id), {
+            _method: 'put',
+            name: form.name,
+            brand_id: form.brand_id,
+            price: form.price,
+            category_id: form.category_id,
+            quantity: form.quantity,
+            description: form.description,
+            productImages: form.productImages,
+        }, {
+            forceFormData: true,
+            onSuccess: () => close(),
         });
     } else {
         form.post(route('admin.products.store'), {
@@ -97,47 +108,52 @@ const submit = () => {
                     <span class="sr-only">Close modal</span>
                 </button>
             </div>
-            
+
             <!-- Modal body -->
             <div class="p-4 sm:p-5">
                 <form @submit.prevent="submit">
                     <div class="grid gap-4 mb-4 sm:grid-cols-2">
-                        <InputGroup 
-                            label="Product Name" 
-                            v-model="form.name" 
-                            type="text" 
-                            placeholder="Type product name" 
-                            required 
+                        <InputGroup
+                            label="Product Name"
+                            v-model="form.name"
+                            type="text"
+                            placeholder="Type product name"
+                            required
                         />
-                        <SelectGroup 
-                            label="Brand" 
-                            v-model="form.brand_id" 
-                            :options="brandOptions" 
+                        <SelectGroup
+                            label="Brand"
+                            v-model="form.brand_id"
+                            :options="brandOptions"
                         />
-                        <InputGroup 
-                            label="Price" 
-                            v-model="form.price" 
-                            type="number" 
-                            placeholder="$2999" 
+                        <InputGroup
+                            label="Price"
+                            v-model="form.price"
+                            type="number"
+                            placeholder="$2999"
                             step="0.01"
-                            required 
+                            required
                         />
-                        <SelectGroup 
-                            label="Category" 
-                            v-model="form.category_id" 
-                            :options="categoryOptions" 
+                        <SelectGroup
+                            label="Category"
+                            v-model="form.category_id"
+                            :options="categoryOptions"
                         />
-                        <InputGroup 
-                            label="Quantity" 
-                            v-model="form.quantity" 
-                            type="number" 
-                            placeholder="12" 
-                            required 
+                        <InputGroup
+                            label="Quantity"
+                            v-model="form.quantity"
+                            type="number"
+                            placeholder="12"
+                            required
+                        />
+                        <FileUpload
+                            label="Product Images"
+                            multiple
+                            v-model="form.productImages"
                         />
                         <div class="sm:col-span-2">
-                            <TextareaGroup 
-                                label="Description" 
-                                v-model="form.description" 
+                            <TextareaGroup
+                                label="Description"
+                                v-model="form.description"
                             />
                         </div>
                     </div>
