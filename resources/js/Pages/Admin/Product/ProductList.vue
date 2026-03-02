@@ -18,12 +18,23 @@ const props = defineProps({
 
 const isProductModalOpen = ref(false);
 const isDeleteModalOpen = ref(false);
-const editingProduct = ref(null);
+const editingProductId = ref(null);
 const productToDelete = ref(null);
 
 const selectedBrands = ref(props.filters?.brands || []);
 const selectedCategories = ref(props.filters?.categories || []);
 const search = ref(props.filters?.search || '');
+
+/**
+ * Computed property to ensure the modal always gets the
+ * most recent data from the Inertia props.
+ */
+const selectedProduct = computed(() => {
+    if (!editingProductId.value) return null;
+
+    // Search for the product in the current paginated data
+    return props.products.data.find(p => p.id === editingProductId.value);
+});
 
 const categoryOptions = computed(() => {
     return props.categories.map(category => ({
@@ -72,12 +83,12 @@ const columns = [
 ];
 
 const openAddProductModal = () => {
-    editingProduct.value = null;
+    editingProductId.value = null;
     isProductModalOpen.value = true;
 }
 
 const openEditProductModal = (product) => {
-    editingProduct.value = product;
+    editingProductId.value = product.id;
     isProductModalOpen.value = true;
 }
 
@@ -90,7 +101,7 @@ const closeModal = () => {
     isProductModalOpen.value = false;
     isDeleteModalOpen.value = false;
     productToDelete.value = null;
-    editingProduct.value = null;
+    editingProductId.value = null;
 }
 
 const deleteProduct = () => {
@@ -197,7 +208,7 @@ const deleteProduct = () => {
             </div>
             <ProductModal
                 :show="isProductModalOpen"
-                :product="editingProduct"
+                :product="selectedProduct"
                 :categories="categories"
                 :brands="brands"
                 @close="closeModal"
