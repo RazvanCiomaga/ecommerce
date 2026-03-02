@@ -82,8 +82,8 @@ class ProductController extends Controller
 
     private function uploadImages(Request $request, Product $product)
     {
-        if ($request->hasFile('product_images')) {
-            foreach ($request->file('product_images') as $image) {
+        if ($request->hasFile('productImages')) {
+            foreach ($request->file('productImages') as $image) {
                 $fileName = time() . '-' . Str::random(10) . '.' . $image->getClientOriginalExtension();
                 $image->move(public_path('product_images'), $fileName);
 
