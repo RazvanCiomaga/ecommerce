@@ -60,14 +60,14 @@ class ProductController extends Controller
 
         $this->uploadImages($request, $product);
 
-        return redirect()->route('admin.products.index')->with('success', 'Product updated successfully.');
+        return back()->with('success', 'Product updated successfully.');
     }
 
     public function destroy(Product $product)
     {
         $product->delete();
 
-        return redirect()->route('admin.products.index')->with('success', 'Product deleted successfully.');
+        return back()->with('success', 'Product deleted successfully.');
     }
 
     private function validateProduct(Request $request)
