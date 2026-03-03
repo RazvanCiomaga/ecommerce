@@ -9,8 +9,8 @@ use Inertia\Inertia;
 class BrandController extends Controller
 {
     public function index() {
-        return Inertia::render('Admin/Brands/Index', [
-            'brands' => Brand::query()->paginate(10)
+        return Inertia::render('Admin/Brand/Index', [
+            'brands' => Brand::paginate(10)
         ]);
     }
 
