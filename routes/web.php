@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AdminAuthController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\BrandController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
@@ -44,5 +45,11 @@ Route::middleware(['admin', 'auth'])->prefix('admin')->group(function () {
     Route::put('/products/{product}', [ProductController::class, 'update'])->name('admin.products.update');
     Route::delete('/products/{product}', [ProductController::class, 'destroy'])->name('admin.products.destroy');
     Route::delete('/admin/product-images/{image}', [ProductController::class, 'destroyImage'])->name('admin.product_images.destroy');
+
+    // brands
+    Route::get('/brands', [BrandController::class, 'index'])->name('admin.brands.index');
+    Route::post('/brands/create', [BrandController::class, 'store'])->name('admin.brands.store');
+    Route::put('/brands/{brand}', [BrandController::class, 'update'])->name('admin.brands.update');
+    Route::delete('/brands/{brand}', [BrandController::class, 'destroy'])->name('admin.brands.destroy');
 });
 require __DIR__ . '/auth.php';
