@@ -1,5 +1,5 @@
 <script setup>
-    import Sidebar from '@/Pages/Admin/Components/Siderbar.vue'
+    import Sidebar from '@/Pages/Admin/Components/Sidebar.vue'
     import Navbar from '@/Pages/Admin/Components/Navbar.vue'
     import { onMounted } from 'vue'
     import { initFlowbite } from 'flowbite'
