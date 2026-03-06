@@ -7,27 +7,33 @@ defineProps({
 </script>
 
 <template>
-    <nav
-        class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px"
-        aria-label="Pagination"
-    >
-        <template v-for="link in pagination.links" :key="link.label">
+    <nav v-if="pagination && pagination.links.length > 3" class="flex items-center justify-center space-x-1" aria-label="Pagination">
+        <template v-for="(link, index) in pagination.links" :key="index">
+            <!-- Active Link -->
             <Link
-                v-if="link.url"
+                v-if="link.url && link.active"
                 :href="link.url"
+                preserve-scroll
                 v-html="link.label"
-                class="relative inline-flex items-center px-4 py-2 border text-sm font-medium"
-                :class="{
-                    'z-10 bg-indigo-50 border-indigo-500 text-indigo-600':
-                        link.active,
-                    'bg-white border-gray-300 text-gray-500 hover:bg-gray-50':
-                        !link.active,
-                }"
+                class="flex items-center justify-center px-3 tracking-tight py-2 text-sm font-medium text-blue-600 bg-blue-50 border border-blue-200 rounded-lg hover:bg-blue-100 transition-colors"
+                aria-current="page"
             />
+            
+            <!-- Inactive Link -->
+            <Link
+                v-else-if="link.url && !link.active"
+                :href="link.url"
+                preserve-scroll
+                v-html="link.label"
+                class="flex items-center justify-center px-3 tracking-tight py-2 text-sm font-medium text-gray-500 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 hover:text-gray-700 transition-colors"
+            />
+
+            <!-- Disabled Link (e.g. Previous on Page 1) -->
             <span
                 v-else
                 v-html="link.label"
-                class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-500"
+                class="flex items-center justify-center px-3 tracking-tight py-2 text-sm font-medium text-gray-400 bg-gray-50 border border-gray-200 rounded-lg cursor-not-allowed"
+                aria-disabled="true"
             ></span>
         </template>
     </nav>
