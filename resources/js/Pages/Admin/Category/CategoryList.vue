@@ -1,16 +1,17 @@
 <script setup>
-import {ref, watch} from "vue";
-import FormModal from "@/Pages/Admin/Components/FormModal.vue";
-import DeleteConfirmModal from "@/Pages/Admin/Components/DeleteConfirmModal.vue";
-import Table from "@/Pages/Admin/Components/Table.vue";
+
 import {router, useForm} from "@inertiajs/vue3";
+import {ref, watch} from "vue";
+import Table from "@/Pages/Admin/Components/Table.vue";
+import FormModal from "@/Pages/Admin/Components/FormModal.vue";
 import InputGroup from "@/Pages/Admin/Components/Form/Input.vue";
+import DeleteConfirmModal from "@/Pages/Admin/Components/DeleteConfirmModal.vue";
 import {debounce} from "lodash-es";
 
 const props = defineProps({
-    brands: Object,
-    filter: Object
-});
+    categories: Object,
+    filter: Object,
+})
 
 const columns = [
     { key: 'name', label: 'Name' }
@@ -20,50 +21,50 @@ const form = useForm({
     name: '',
 });
 
-const isBrandModalOpen = ref(false);
+const isCategoryModalOpen = ref(false);
 const isDeleteModalOpen = ref(false);
-const selectedBrand = ref(null)
-const search = ref(props.filters?.search || '');
+const selectedCategory = ref(null);
+const search = ref('');
 
-watch(selectedBrand, (newBrand) => {
-    if (newBrand) {
-        form.name = newBrand.name;
+watch(selectedCategory, (newCategory) => {
+    if (newCategory) {
+        form.name = newCategory.name;
     } else {
         form.reset();
     }
-}, { immediate: true });
+}, { immediate: true});
 
-const openAddBrandModal = () => {
-    isBrandModalOpen.value = true;
+const openAddCategoryModal = () => {
+    isCategoryModalOpen.value = true;
 }
 
-const openEditBrandModal = (brand) => {
-    selectedBrand.value = brand;
-    isBrandModalOpen.value = true;
+const openEditCategory = (category) => {
+    selectedCategory.value = category;
+    isCategoryModalOpen.value = true;
 }
 
-const openDeleteModal = (brand) => {
-    selectedBrand.value = brand;
+const openDeleteModal = (category) => {
+    selectedCategory.value = category;
     isDeleteModalOpen.value = true;
 }
 
 const closeModal = () => {
-    isBrandModalOpen.value = false;
+    isCategoryModalOpen.value = false;
     isDeleteModalOpen.value = false;
-    selectedBrand.value = null;
+    selectedCategory.value = null;
 }
 
-const deleteBrand = () => {
-    if (selectedBrand.value) {
-        router.delete(route('admin.brands.destroy', selectedBrand.value.id), {
+const deleteCategory = () => {
+    if (selectedCategory.value) {
+        router.delete(route('admin.categories.destroy', selectedCategory.value.id), {
             onSuccess: () => closeModal()
         });
     }
 }
 
 const submit = () => {
-    if (selectedBrand.value) {
-        router.post(route('admin.brands.update',selectedBrand.value.id), {
+    if (selectedCategory.value) {
+        router.post(route('admin.categories.update', selectedCategory.value.id), {
             _method: 'put',
             ...form.data(),
         }, {
@@ -71,14 +72,14 @@ const submit = () => {
             onSuccess: () => closeModal(),
         });
     } else {
-        form.post(route('admin.brands.store'), {
+        form.post(route('admin.categories.store'), {
             onSuccess: () => closeModal(),
         });
     }
-};
+}
 
-const filterBrands = () => {
-    router.get(route('admin.brands.index'), {
+const filterCategories = () => {
+    router.get(route('admin.categories.index'), {
         search: search.value
     }, {
         preserveState: true,
@@ -87,7 +88,7 @@ const filterBrands = () => {
     });
 };
 
-const debouncedSearch = debounce(filterBrands, 500); // use debounce only when user search
+const debouncedSearch = debounce(filterCategories, 500); // use debounce only when user search
 
 watch(search, () => debouncedSearch())
 
@@ -95,26 +96,24 @@ watch(search, () => debouncedSearch())
 
 <template>
     <section class="h-full">
-        <!-- Main Actions Header -->
         <div class="mb-6 flex flex-col md:flex-row justify-between items-start md:items-center space-y-4 md:space-y-0">
             <div>
-                <h2 class="text-xl font-bold text-gray-900">Brands</h2>
-                <p class="text-sm text-gray-500 mt-1">Manage brand names linked to products.</p>
+                <h2 class="text-xl font-bold text-gray-900">Categories</h2>
+                <p class="text-sm text-gray-500 mt-1">Manage categories linked to products.</p>
             </div>
 
             <button
-                @click="openAddBrandModal"
+                @click="openAddCategoryModal"
                 type="button"
                 class="flex items-center justify-center text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:ring-blue-100 font-medium rounded-lg text-sm px-5 py-2.5 transition-colors"
             >
                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
                 </svg>
-                Add brand
+                Add category
             </button>
         </div>
 
-        <!-- Filters & Search Bar -->
         <div class="bg-white border text-sm border-gray-200 shadow-sm rounded-lg mb-6 overflow-hidden">
             <div class="p-4 flex flex-col lg:flex-row items-center justify-between gap-4">
 
@@ -129,19 +128,16 @@ watch(search, () => debouncedSearch())
                         <input
                             type="text"
                             class="bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2.5"
-                            placeholder="Search brands..."
+                            placeholder="Search categories..."
                             v-model="search"
                         >
                     </div>
                 </div>
-
             </div>
         </div>
 
-        <!-- Content Table -->
         <div class="bg-white border border-gray-200 shadow-sm rounded-lg overflow-hidden relative">
-            <Table :headers="columns" :items="brands.data" :pagination="brands">
-
+            <Table :items="categories.data" :headers="columns" :pagination="categories">
                 <template #cell-name="{ item }">
                     <span class="font-medium text-gray-900">{{ item.name }}</span>
                 </template>
@@ -149,7 +145,7 @@ watch(search, () => debouncedSearch())
                 <template #actions="{ item }">
                     <div class="flex items-center space-x-3">
                         <button
-                            @click="openEditBrandModal(item)"
+                            @click="openEditCategory(item)"
                             class="text-gray-500 hover:text-blue-600 transition-colors p-1"
                             title="Edit"
                         >
@@ -171,10 +167,9 @@ watch(search, () => debouncedSearch())
             </Table>
         </div>
 
-        <!-- Add/Edit Brand Modal -->
         <FormModal
-            :show="isBrandModalOpen"
-            :title="selectedBrand ? 'Edit Brand' : 'Add Brand'"
+            :show="isCategoryModalOpen"
+            :title="selectedCategory ? 'Edit category' : 'Add category'"
             maxWidth="md"
             @close="closeModal"
             @submit="submit"
@@ -192,18 +187,17 @@ watch(search, () => debouncedSearch())
                     Cancel
                 </button>
                 <button type="submit" class="text-white inline-flex items-center bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-100 font-medium rounded-lg text-sm px-5 py-2.5 transition-colors">
-                    {{ selectedBrand ? 'Update brand' : 'Add brand' }}
+                    {{ selectedCategory ? 'Update category' : 'Add category' }}
                 </button>
             </template>
         </FormModal>
 
-        <!-- Delete Warning Modal -->
         <DeleteConfirmModal
             :show="isDeleteModalOpen"
-            title="Delete Brand"
-            :itemName="selectedBrand?.name"
+            title="Delete Category "
+            :itemName="selectedCategory?.name"
             @close="closeModal"
-            @confirm="deleteBrand"
+            @confirm="deleteCategory"
         />
     </section>
 </template>
