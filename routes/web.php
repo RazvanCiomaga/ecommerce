@@ -6,13 +6,19 @@ use App\Http\Controllers\BrandController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
+use App\Models\Product;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 // admin
 Route::get('/', function () {
-    return Inertia::render('Home');
+    // Eager load the product_images relationship to prevent N+1 query issues
+    $featuredProducts = Product::with('images')->orderBy('price', 'desc')->take(8)->get();
+
+    return Inertia::render('Home', [
+        'featuredProducts' => $featuredProducts,
+    ]);
 })->name('home');
 
 Route::middleware('auth')->group(function () {
