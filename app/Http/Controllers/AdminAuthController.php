@@ -25,7 +25,7 @@ class AdminAuthController extends Controller
         // Attempt to log the user in
         // If the user is not found, we will redirect them to the login page
         if (Auth::attempt(['email' => $request->email, 'password' => $request->password, 'is_admin' => true])) {
-            return redirect()->route('admin.dashboard');
+            return redirect()->route('admin.products.index');
         }
 
         return back()->withErrors([

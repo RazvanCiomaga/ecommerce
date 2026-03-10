@@ -20,7 +20,7 @@ class RedirectAdminMiddleware
         $user = auth()->user();
 
         if (auth()->check() && $user?->is_admin) {
-            return redirect()->route('admin.dashboard');
+            return redirect()->route('admin.products.index');
         }
 
         return $next($request);
