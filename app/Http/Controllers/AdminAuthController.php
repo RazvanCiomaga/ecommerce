@@ -28,7 +28,9 @@ class AdminAuthController extends Controller
             return redirect()->route('admin.dashboard');
         }
 
-        return redirect()->route('admin.login')->with('error', 'Invalid credentials.');
+        return back()->withErrors([
+            'password' => 'Invalid credentials.',
+        ]);
     }
 
     public function logout(): RedirectResponse
