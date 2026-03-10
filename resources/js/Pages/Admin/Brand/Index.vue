@@ -1,18 +1,14 @@
 <script setup>
-    import AdminLayout from "@/Pages/Admin/Components/AdminLayout.vue";
-    import BrandList from "@/Pages/Admin/Brand/BrandList.vue";
+import AdminLayout from '@/Layouts/AdminLayout.vue';
+import BrandList from "@/Pages/Admin/Brand/BrandList.vue";
 
-    defineProps({
-        brands: Object,
-    })
+defineOptions({ layout: AdminLayout });
+
+defineProps({
+    brands: Object,
+})
 </script>
 
 <template>
-    <AdminLayout>
-        <BrandList :brands="brands" />
-    </AdminLayout>
+    <BrandList :brands="brands" />
 </template>
-
-<style scoped>
-
-</style>

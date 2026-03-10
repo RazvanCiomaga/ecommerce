@@ -18,7 +18,7 @@ const toggleDropdown = () => {
 <template>
     <nav class="bg-white border-b border-gray-200 px-4 py-2.5 fixed left-0 right-0 top-0 z-50">
         <div class="flex flex-wrap justify-between items-center">
-            
+
             <!-- Left Side: Toggle Sidebar & Logo -->
             <div class="flex justify-start items-center">
                 <button
@@ -28,8 +28,8 @@ const toggleDropdown = () => {
                     <MenuIcon class="w-6 h-6" />
                     <span class="sr-only">Toggle sidebar</span>
                 </button>
-                
-                <Link :href="route('admin.dashboard')" class="flex items-center justify-between mr-4 hover:opacity-80 transition-opacity">
+
+                <Link :href="route('admin.products.index')" class="flex items-center justify-between mr-4 hover:opacity-80 transition-opacity">
                     <LogoIcon class="w-6 h-6 mr-2 text-gray-800" />
                     <span class="self-center text-xl font-bold whitespace-nowrap text-gray-900 tracking-tight">R.Ecom</span>
                 </Link>
@@ -68,20 +68,20 @@ const toggleDropdown = () => {
                                 <p class="text-sm font-semibold text-gray-900">Admin User</p>
                                 <p class="text-xs font-medium text-gray-500 truncate">admin@recom.com</p>
                             </div>
-                            
+
                             <ul class="py-1 text-gray-700">
                                 <li>
-                                    <Link 
-                                        :href="route('profile.edit')" 
+                                    <Link
+                                        :href="route('profile.edit')"
                                         class="block py-2 px-4 text-sm hover:bg-gray-50 hover:text-gray-900 transition-colors"
                                     >
                                         Profile Settings
                                     </Link>
                                 </li>
                                 <li>
-                                    <Link 
-                                        :href="route('logout')" 
-                                        method="post" 
+                                    <Link
+                                        :href="route('logout')"
+                                        method="post"
                                         as="button"
                                         class="block w-full text-left py-2 px-4 text-sm text-red-600 hover:bg-red-50 transition-colors"
                                     >
@@ -93,7 +93,7 @@ const toggleDropdown = () => {
                     </transition>
                 </div>
             </div>
-            
+
         </div>
     </nav>
 </template>

@@ -1,6 +1,8 @@
 <script setup>
-import AdminLayout from "@/Pages/Admin/Components/AdminLayout.vue";
+import AdminLayout from '@/Layouts/AdminLayout.vue';
 import ProductList from "@/Pages/Admin/Product/ProductList.vue";
+
+defineOptions({ layout: AdminLayout });
 
 defineProps({
     products: Object,
@@ -11,11 +13,5 @@ defineProps({
 </script>
 
 <template>
-    <AdminLayout>
-        <ProductList :products="products" :categories="categories" :brands="brands" :filters="filters" />
-    </AdminLayout>
+    <ProductList :products="products" :categories="categories" :brands="brands" :filters="filters" />
 </template>
-
-<style scoped>
-
-</style>

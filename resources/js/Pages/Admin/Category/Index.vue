@@ -1,18 +1,14 @@
 <script setup>
-    import AdminLayout from "@/Pages/Admin/Components/AdminLayout.vue";
-    import CategoryList from "@/Pages/Admin/Category/CategoryList.vue";
+import AdminLayout from '@/Layouts/AdminLayout.vue';
+import CategoryList from "@/Pages/Admin/Category/CategoryList.vue";
 
-    defineProps({
-        categories: Object,
-    });
+defineOptions({ layout: AdminLayout });
+
+defineProps({
+    categories: Object,
+});
 </script>
 
 <template>
-    <AdminLayout>
-        <CategoryList :categories="categories" />
-    </AdminLayout>
+    <CategoryList :categories="categories" />
 </template>
-
-<style scoped>
-
-</style>
