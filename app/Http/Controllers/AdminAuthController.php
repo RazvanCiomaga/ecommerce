@@ -29,7 +29,7 @@ class AdminAuthController extends Controller
         }
 
         return back()->withErrors([
-            'password' => 'Invalid credentials.',
+            'email' => 'These credentials do not match our records.',
         ]);
     }
 
