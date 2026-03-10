@@ -9,8 +9,14 @@ use Inertia\Inertia;
 class BrandController extends Controller
 {
     public function index() {
+        $brands = Brand::query()
+            ->when(request('search'), function ($query, $search) {
+                $query->where('name', 'like', "%{$search}%");
+            })
+            ->paginate(10);
+
         return Inertia::render('Admin/Brand/Index', [
-            'brands' => Brand::paginate(10)
+            'brands' => $brands
         ]);
     }
 

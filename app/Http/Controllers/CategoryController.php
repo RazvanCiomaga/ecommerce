@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Brand;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -9,8 +10,14 @@ use Inertia\Inertia;
 class CategoryController extends Controller
 {
     public function index() {
+        $categories = Category::query()
+            ->when(request('search'), function ($query, $search) {
+                $query->where('name', 'like', "%{$search}%");
+            })
+            ->paginate(10);
+
         return Inertia::render('Admin/Category/Index', [
-            'categories' => Category::paginate(10)
+            'categories' => $categories
         ]);
     }
 
