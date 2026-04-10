@@ -6,67 +6,50 @@ use App\Models\Brand;
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\ProductImage;
-use Illuminate\Database\Eloquent\Collection;
+use App\Services\ProductService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
 use Inertia\Inertia;
 
 class ProductController extends Controller
 {
-    public function index()
+    protected ProductService $productService;
+
+    public function __construct(ProductService $productService)
     {
-        /** @var Collection<Product> $products */
-        $products = Product::query()
-            ->with(['category', 'brand', 'images'])
-            ->when(request('brands'), function ($query, $brands) {
-                $query->whereIn('brand_id', $brands);
-            })
-            ->when(request('categories'), function ($query, $categories) {
-                $query->whereIn('category_id', $categories);
-            })
-            ->when(request('search'), function ($query, $search) {
-                $query->where('name', 'like', "%{$search}%")
-                    ->orWhere('description', 'like', "%{$search}%");
-            })
-            ->paginate(10);
+        $this->productService = $productService;
+    }
 
-        /** @var Collection<Category> $categories */
-        $categories = Category::all();
-
-        /** @var Collection<Brand> $brands */
-        $brands = Brand::all();
+    public function index(Request $request)
+    {
+        $filters = $request->only(['brands', 'categories', 'search']);
+        $products = $this->productService->getProducts($filters);
 
         return Inertia::render('Admin/Product/Index', [
             'products' => $products,
-            'categories' => $categories,
-            'brands' => $brands,
-            'filters' => request()->only(['brands', 'categories', 'search'])
+            'categories' => Category::all(),
+            'brands' => Brand::all(),
+            'filters' => $filters,
         ]);
     }
 
     public function store(Request $request)
     {
         $product = Product::create($this->validateProduct($request) + ['user_id' => $request->user()->id]);
-
         $this->uploadImages($request, $product);
-
         return redirect()->route('admin.products.index')->with('success', 'Product created successfully.');
     }
 
     public function update(Request $request, Product $product)
     {
         $product->update($this->validateProduct($request));
-
         $this->uploadImages($request, $product);
-
         return back()->with('success', 'Product updated successfully.');
     }
 
     public function destroy(Product $product)
     {
         $product->delete();
-
         return back()->with('success', 'Product deleted successfully.');
     }
 
@@ -87,10 +70,7 @@ class ProductController extends Controller
         if ($request->hasFile('productImages')) {
             foreach ($request->file('productImages') as $image) {
                 $path = $image->store('product_images', 'public');
-
-                $product->images()->create([
-                    'image' => 'storage/' . $path,
-                ]);
+                $product->images()->create(['image' => 'storage/' . $path]);
             }
         }
     }
@@ -98,13 +78,10 @@ class ProductController extends Controller
     public function destroyImage(ProductImage $image)
     {
         $path = str_replace('storage/', '', $image->image);
-
         if (Storage::disk('public')->exists($path)) {
             Storage::disk('public')->delete($path);
         }
-
         $image->delete();
-
         return back()->with('success', 'Image deleted successfully');
     }
 }

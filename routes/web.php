@@ -4,6 +4,7 @@ use App\Http\Controllers\AdminAuthController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\BrandController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\Frontend\ProductController as FrontendProductController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
 use App\Models\Product;
@@ -11,23 +12,23 @@ use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
-// admin
+// Frontend Routes
 Route::get('/', function () {
-    // Eager load the product_images relationship to prevent N+1 query issues
     $featuredProducts = Product::with('images')->orderBy('price', 'desc')->take(8)->get();
-
-    return Inertia::render('Home', [
-        'featuredProducts' => $featuredProducts,
-    ]);
+    return Inertia::render('Home', ['featuredProducts' => $featuredProducts]);
 })->name('home');
 
+Route::get('/products', [FrontendProductController::class, 'index'])->name('products.index');
+
+// Auth Routes
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-// admin
+
+// Admin Routes
 Route::group(['middleware' => 'redirectAdmin', 'prefix' => 'admin'], function () {
     Route::get('login', [AdminAuthController::class, 'showLoginForm'])->name('admin.login');
     Route::post('login', [AdminAuthController::class, 'login'])->name('admin.login.post');
