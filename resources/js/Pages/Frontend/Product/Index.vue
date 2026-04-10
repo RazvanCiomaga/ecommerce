@@ -1,6 +1,7 @@
 <script setup>
 import AppLayout from "@/Layouts/AppLayout.vue";
 import ProductCard from "@/Components/ProductCard.vue";
+import Pagination from "@/Components/Pagination.vue";
 import { Head, router } from '@inertiajs/vue3';
 import { ref, watch } from "vue";
 
@@ -34,8 +35,13 @@ watch([search, selectedBrands, selectedCategories, minPrice, maxPrice], () => {
 }, { deep: true });
 
 const handleAddToCart = (payload) => {
-    console.log("Add to cart payload:", payload);
-    // TODO: implement actual cart logic
+    router.post(route('cart.add'), {
+        product_id: payload.product.id,
+        quantity: payload.quantity,
+    }, {
+        preserveScroll: true,
+        preserveState: true,
+    });
 };
 </script>
 
@@ -99,8 +105,14 @@ const handleAddToCart = (payload) => {
                             </button>
                         </div>
                     </div>
-                    <div v-else class="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:gap-x-8">
-                        <ProductCard v-for="product in products.data" :key="product.id" :product="product" @add-to-cart="handleAddToCart" />
+                    <div v-else>
+                        <div class="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:gap-x-8">
+                            <ProductCard v-for="product in products.data" :key="product.id" :product="product" @add-to-cart="handleAddToCart" />
+                        </div>
+                        
+                        <div class="mt-12 flex justify-center">
+                            <Pagination :pagination="products" />
+                        </div>
                     </div>
                 </div>
             </div>
