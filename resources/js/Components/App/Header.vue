@@ -28,7 +28,7 @@ const toggleSidebar = () => {
             <!-- Desktop Navigation -->
             <nav class="hidden items-center space-x-6 md:flex">
                 <Link :href="route('home')" class="hover:text-primary-200">Home</Link>
-                <Link href="#" class="hover:text-primary-200">Products</Link>
+                <Link :href="route('products.index')" class="hover:text-primary-200">Products</Link>
                 <Link href="#" class="hover:text-primary-200">Categories</Link>
                 <Link href="#" class="hover:text-primary-200">About</Link>
             </nav>
@@ -99,7 +99,7 @@ const toggleSidebar = () => {
                         <!-- Navigation Links -->
                         <nav class="mt-8 flex flex-col space-y-4">
                             <Link :href="route('home')" class="hover:text-white">Home</Link>
-                            <Link href="#" class="hover:text-white">Products</Link>
+                            <Link :href="route('products.index')" class="hover:text-white">Products</Link>
                             <Link href="#" class="hover:text-white">Categories</Link>
                             <Link href="#" class="hover:text-white">About</Link>
                             <hr class="border-gray-700"/>

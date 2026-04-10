@@ -1,7 +1,7 @@
 <script setup>
 import AppLayout from "@/Layouts/AppLayout.vue";
 import { Head } from '@inertiajs/vue3';
-import { formatPrice } from "@/utils.js";
+import ProductCard from "@/Components/ProductCard.vue";
 
 // This tells Inertia to use AppLayout.vue as the persistent layout for this page
 defineOptions({ layout: AppLayout });
@@ -59,23 +59,7 @@ defineProps({
             <h2 class="text-3xl font-bold tracking-tight">Featured Products</h2>
             <p class="mt-2 text-lg text-gray-600">Hand-picked items you're sure to love.</p>
             <div class="mt-12 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8">
-                <div v-for="product in featuredProducts" :key="product.id" class="group relative text-left">
-                    <div class="aspect-h-1 aspect-w-1 w-full overflow-hidden rounded-md bg-gray-200 lg:aspect-none group-hover:opacity-75 lg:h-80">
-                        <img v-if="product.images && product.images.length > 0" :src="`/${product.images[0].image}`" alt="Product image" class="h-full w-full object-cover object-center lg:h-full lg:w-full" />
-                        <img v-else src="https://images.unsplash.com/photo-1524758631624-e2822e304c36?q=80&w=2070" alt="Product image" class="h-full w-full object-cover object-center lg:h-full lg:w-full" />
-                    </div>
-                    <div class="mt-4 flex justify-between">
-                        <div>
-                            <h3 class="text-sm text-gray-700">
-                                <a href="#">
-                                    <span aria-hidden="true" class="absolute inset-0"></span>
-                                    {{ product.title }}
-                                </a>
-                            </h3>
-                        </div>
-                        <p class="text-sm font-medium text-gray-900">{{ formatPrice(product.price) }}</p>
-                    </div>
-                </div>
+                <ProductCard v-for="product in featuredProducts" :key="product.id" :product="product" />
             </div>
         </div>
     </section>
