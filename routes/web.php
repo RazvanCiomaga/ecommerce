@@ -20,6 +20,9 @@ Route::get('/', function () {
 
 Route::get('/products', [FrontendProductController::class, 'index'])->name('products.index');
 
+Route::post('/cart/add', [\App\Http\Controllers\Frontend\CartController::class, 'add'])->name('cart.add');
+Route::delete('/cart/{id}', [\App\Http\Controllers\Frontend\CartController::class, 'remove'])->name('cart.remove');
+
 // Auth Routes
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

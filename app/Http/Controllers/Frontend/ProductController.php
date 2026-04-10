@@ -21,7 +21,7 @@ class ProductController extends Controller
     public function index(Request $request)
     {
         $filters = $request->only(['brands', 'categories', 'search', 'min_price', 'max_price']);
-        $products = $this->productService->getProducts($filters, 12); // Show 12 per page for customers
+        $products = $this->productService->getProducts($filters, 6); // Show 6 per page for testing pagination
 
         $brands = Brand::all();
         $categories = Category::all();

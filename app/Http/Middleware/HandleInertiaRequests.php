@@ -29,10 +29,28 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
+        $userId = auth()->id();
+        $sessionId = session()->getId();
+
+        $cartItems = \App\Models\CartItem::with('product.images')
+            ->where(function ($query) use ($userId, $sessionId) {
+                if ($userId) {
+                    $query->where('user_id', $userId);
+                } else {
+                    $query->where('session_id', $sessionId);
+                }
+            })->get();
+
+        $cartTotalQuantity = $cartItems->sum('quantity');
+
         return [
             ...parent::share($request),
             'auth' => [
                 'user' => $request->user(),
+            ],
+            'cart' => [
+                'items' => $cartItems,
+                'total_quantity' => $cartTotalQuantity,
             ],
             'flash' => [
                 'success' => fn () => $request->session()->get('success'),
